@@ -6,9 +6,9 @@ faceCascade = cv2.CascadeClassifier(cascadePath)
 timeAtFound = time.time() - 6 #first time ini of time
 
 
+dic = eval(open('dic.txt','r').read())
 video_capture = cv2.VideoCapture(0)
 recogniser = trainRecog('images')
-dic = {0:'Lisa', 1:'Angus',2:'Serafin',3:'Raz',4:'Ricardo',5:'Andreea',6:'Flaminia',7:'Arthur',8:'Viktorija'}
 
 while True:
     # Capture frame-by-frame
