@@ -34,7 +34,7 @@ def createPerson(name):
         i+=1
 
 def videoDic(name):
-    #initialise stuffi
+    #initialise stuff
     video_capture = cv2.VideoCapture(0)
     cv2.startWindowThread()
     cv2.namedWindow("Recording...")
@@ -66,5 +66,5 @@ def videoDic(name):
             cv2.rectangle(frame, (x,y), (x+w, y+h), (0,0,255),2)
           
         cv2.imshow('Recording...',frame)
-
+    os.chdir('..')
     cv2.destroyAllWindows()
