@@ -206,6 +206,7 @@ def identify_face_from_Group(faceId, groupID):
         response = conn.getresponse()
         data = eval(response.read())
         conn.close()
+        print data
         mostLikelyCandidate = data[0]["candidates"]
         if not mostLikelyCandidate:
             return "Unknown"
@@ -227,6 +228,7 @@ def identify_face(groupID):
         faceId = detect_face("identify/"+filename)
         if faceId is not None:
             candidateID = identify_face_from_Group(faceId, groupID)
+            time.sleep(5)
             if candidateID == "Unknown":
                 names_of_identifies.append("Unknown")
             else: 
