@@ -1,4 +1,4 @@
-import httplib, urllib, base64, os, json, urlparse
+import httplib, urllib, base64, os, json, urlparse, time
 
 AuthKey = 'a7f5439ce4fe4f05a1394ece03b03390'
 personsIDs = {}
@@ -47,11 +47,11 @@ def detect_face(filePath):
         })
 
     try:
+        print body;
         conn = httplib.HTTPSConnection('api.projectoxford.ai')
         conn.request("POST", "/face/v1.0/detect?%s" % params, " %s " % body , headers)
         response = conn.getresponse()
         data = eval(response.read())
-        print data
         conn.close()
         return data[0]["faceId"]
     except Exception as e:
@@ -156,8 +156,8 @@ def get_person(personId, groupID):
         conn.request("GET", "/face/v1.0/persongroups/%s/persons/%s?" % (groupID, personId), "", headers)
         response = conn.getresponse()
         data = eval(response.read())
-        return data["name"]
         conn.close()
+        return data["name"]
     except Exception as e:
         print("[Errno {0}] {1}".format(e.errno, e.strerror))
 
@@ -176,8 +176,10 @@ def do_TrainingSet(FolderFilePath):
          for pictureName in pictureNames:
             picturePath = "http://azurehellocloud2016one.azurewebsites.net/"+name+"/"+pictureName
             add_Face_to_Person(FolderFilePath, currPersonId, picturePath)
+         time.sleep(20)
     train_group_request(FolderFilePath)
     os.chdir(originalPath)
+    time.sleep(40)
 
 ############### Identify Face ##########################
 
@@ -204,7 +206,6 @@ def identify_face_from_Group(faceId, groupID):
         response = conn.getresponse()
         data = eval(response.read())
         conn.close()
-        print data[0]["candidates"]
         mostLikelyCandidate = data[0]["candidates"]
         if not mostLikelyCandidate:
             return "Unknown"
@@ -218,24 +219,20 @@ def identify_face_from_Group(faceId, groupID):
 
 
 ################## Match face to Group #######################
-def identify_face(filename, groupID):
-    print os.getcwd()
+def identify_face(groupID):
+    names_of_identifies = []
     originalPath = os.getcwd()
-    os.chdir("identify")
-    faceId = detect_face("identify/"+filename)
-    os.chdir(originalPath)
-    if faceId is not None:
-        candidateID = identify_face_from_Group(faceId, groupID)
-    if candidateID == "Unknown":
-        return "Unknown"
-    candidateName = get_person(candidateID, groupID)
-    return candidateName
+    identify_pictures = change_dir_get_file_list("identify")
+    for filename in identify_pictures:
+        faceId = detect_face("identify/"+filename)
+        if faceId is not None:
+            candidateID = identify_face_from_Group(faceId, groupID)
+            if candidateID == "Unknown":
+                names_of_identifies.append("Unknown")
+            else: 
+                names_of_identifies.append(get_person(candidateID, groupID))
+    return names_of_identifies
 
 
 #do_TrainingSet("squadgroup")
-print identify_face("mary.jpg", "squadgroup")
-print identify_face("Ricardo.jpg", "squadgroup")
-print identify_face("Raz.jpg", "squadgroup")
-print identify_face("arthur.jpg", "squadgroup")
-print identify_face("lisa.jpg", "squadgroup")
-print identify_face("angus.jpg", "squadgroup")
+print identify_face("squadgroup")
