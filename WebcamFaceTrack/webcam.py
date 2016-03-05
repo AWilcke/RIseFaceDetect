@@ -1,14 +1,13 @@
-import cv2
-import time
+#import time
 from train import *
 
 faceCascade = cv2.CascadeClassifier(cascadePath)
-timeAtFound = time.time() - 6 #first time ini of time
+#timeAtFound = time.time() - 6 #first time ini of time
 
 
 dic = eval(open('dic.txt','r').read())
 video_capture = cv2.VideoCapture(0)
-recogniser = trainRecog('images')
+recogniser = trainRecog('TrainingData')
 
 while True:
     # Capture frame-by-frame
@@ -24,7 +23,7 @@ while True:
         flags=cv2.CASCADE_SCALE_IMAGE
     )
 
-    timeSinceFound = time.time() - timeAtFound
+    #timeSinceFound = time.time() - timeAtFound
 
     # Draw a rectangle around the faces
     #if len(faces) == 0 or timeSinceFound<5:
