@@ -10,17 +10,21 @@ def getImgLbl(path):
     labels = [int(f.split('_')[0]) for f in os.listdir(path)]
     images = [cv2.imread(path+'/'+f) for f in os.listdir(path)]
     endfaces = []
-
+    endlabels = []
+    i = 0 #index for getting name
     for image in images:
         try: #convert to grayscale
             gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         except: #if fails, was already gray
             gray = image
-        faces = faceCascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30), flags = cv2.CASCADE_SCALE_IMAGE)
+        faces = faceCascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=10, minSize=(50, 50), flags = cv2.CASCADE_SCALE_IMAGE)
         for (x, y, w, h) in faces:
             endfaces.append(gray[y:y+h, x:x+w])
-    
-    return endfaces, labels
+            endlabels.append(labels[i])
+        i+=1
+    #test to find optimal detection values
+    print "Labels : %d, faces : %d" % (len(labels), len(endfaces))
+    return endfaces, endlabels
 
 # returns a trained recogniser
 def trainRecog(path):
