@@ -1,8 +1,6 @@
 import httplib, urllib, base64, os, json, urlparse, time
 
 AuthKey = 'a7f5439ce4fe4f05a1394ece03b03390'
-personsIDs = {}
-groups = {}
 headers = {
     'Content-Type': 'application/json',
     'Ocp-Apim-Subscription-Key': AuthKey,
@@ -13,6 +11,21 @@ header = {
     'Ocp-Apim-Subscription-Key': AuthKey,
 }
 
+############### Send request to server #################
+def send_request(requestType, URL, body, header):
+
+    try:
+        conn = httplib.HTTPSConnection('api.projectoxford.ai')
+        conn.request(requestType, URL, body, header)
+        print URL
+        response = conn.getresponse()
+        data = eval(response.read())
+        conn.close()
+        return data
+    except Exception as e:
+        print(e)
+        print("[Errno {0}] {1}".format(e.errno, e.strerror))
+
 ############### Create a Group ##########################
 def create_group(groupID):
 
@@ -20,15 +33,18 @@ def create_group(groupID):
             'name' : 'TrainingSet'
         })
 
-    try:
-        conn = httplib.HTTPSConnection('api.projectoxford.ai')
-        conn.request("PUT", "/face/v1.0/persongroups/"+groupID+"?", body, headers)
-        response = conn.getresponse()
-        data = response.read()
-        #print(data)
-        conn.close()
-    except Exception as e:
-        print("[Errno {0}] {1}".format(e.errno, e.strerror))
+    data = send_request("PUT", "/face/v1.0/persongroups/"+groupID+"?", body, headers)
+    print data
+
+
+############# List Persons in Group ###############
+
+def populate_personIDs(groupID):
+    personIDs = {}
+    data = send_request("GET", "/face/v1.0/persongroups/"+ groupID+"/persons", "", header)
+    for person in data:
+        personIDs[person["personId"]] = person["name"]
+    return personIDs
 
 
 ############### Detect a Face #####################
@@ -41,19 +57,11 @@ def detect_face(filePath):
     })
 
     body = json.dumps({
-            'url' : "http://azurehellocloud2016one.azurewebsites.net/"+filePath,
+            'url' : "http://facehosting.azurewebsites.net/"+filePath,
         })
 
-    try:
-        print body;
-        conn = httplib.HTTPSConnection('api.projectoxford.ai')
-        conn.request("POST", "/face/v1.0/detect?%s" % params, body , headers)
-        response = conn.getresponse()
-        data = eval(response.read())
-        conn.close()
-        return data[0]["faceId"]
-    except Exception as e:
-        print("[Errno {0}] {1}".format(e.errno, e.strerror))
+    data = send_request("POST", "/face/v1.0/detect?%s" % params, body , headers)
+    return data[0]["faceId"]
 
 
 
@@ -65,42 +73,21 @@ def create_person(name, groupID):
         'userData':"None",
     })
 
-    try:
-        print (body)
-        conn = httplib.HTTPSConnection('api.projectoxford.ai')
-        conn.request("POST", "/face/v1.0/persongroups/%s/persons?" % groupID, body, headers)
-        response = conn.getresponse()
-        data = eval(response.read())
-        #print(data)
-        #print(data["personId"])
-        conn.close()
-        return data["personId"]
-    except Exception as e:
-        print("[Errno {0}] {1}".format(e.errno, e.strerror))
+    data = send_request("POST", "/face/v1.0/persongroups/%s/persons?" % groupID, body, headers)
+    return data["personId"]
 
 ############### Add Face to Person #####################
 def add_Face_to_Person(groupID, currPersonId, picturePath):
 
     params = urllib.urlencode({
-        # Request parameters
         'userData': 'Picturename %s' % picturePath,
     })
     
     body = json.dumps({
         'url' : picturePath,
     })
-    print body
-
-    try:
-        conn = httplib.HTTPSConnection('api.projectoxford.ai')
-        conn.request("POST", "/face/v1.0/persongroups/%s/persons/%s/persistedFaces?%s" % (groupID, currPersonId, params), body, headers)
-        response = conn.getresponse()
-        data = response.read()
-        print(data)
-        conn.close()
-    except Exception as e:
-        print("[Errno {0}] {1}".format(e.errno, e.strerror))
-
+    data = send_request("POST", "/face/v1.0/persongroups/%s/persons/%s/persistedFaces?%s" % (groupID, currPersonId, params), body, headers)
+    print data
 
 ############### Change Dir & get List ##################
 def change_dir_get_file_list(dirPath):
@@ -108,84 +95,62 @@ def change_dir_get_file_list(dirPath):
     pwd = os.getcwd()
     return os.listdir(pwd)
 
+
 ############### Change Dir & get List ##################
 def train_group_request(groupID):
 
-
     try:
         conn = httplib.HTTPSConnection('api.projectoxford.ai')
+        print "sending post requests"
         conn.request("POST", "/face/v1.0/persongroups/%s/train?" % groupID, "", header)
         response = conn.getresponse()
-        data = response.read()
-        print(data)
         conn.close()
+        print "post request done"
     except Exception as e:
         print("[Errno {0}] {1}".format(e.errno, e.strerror))
 
 ############### Get Person Info ##################
 def get_person(personId, groupID):
 
-
-    try:
-        conn = httplib.HTTPSConnection('api.projectoxford.ai')
-        conn.request("GET", "/face/v1.0/persongroups/%s/persons/%s?" % (groupID, personId), "", header)
-        response = conn.getresponse()
-        data = eval(response.read())
-        conn.close()
-        return data["name"]
-    except Exception as e:
-        print("[Errno {0}] {1}".format(e.errno, e.strerror))
-
+    data = send_request("GET", "/face/v1.0/persongroups/%s/persons/%s?" % (groupID, personId), "", header)
+    return data["name"]
 
 
 ############### Face Grouping ##########################
 def do_TrainingSet(FolderFilePath):
+
     originalPath = os.getcwd()
     oldPath = originalPath+"/"+FolderFilePath
     folders = change_dir_get_file_list(FolderFilePath)
     create_group(FolderFilePath)
-
     for name in folders:
          currPersonId = create_person(name, FolderFilePath)
          os.chdir(oldPath)
          pictureNames = change_dir_get_file_list(name)
 
          for pictureName in pictureNames:
-            picturePath = "http://azurehellocloud2016one.azurewebsites.net/"+name+"/"+pictureName
+            picturePath = "http://facehosting.azurewebsites.net/"+FolderFilePath+"/"+name+"/"+pictureName
             add_Face_to_Person(FolderFilePath, currPersonId, picturePath)
          time.sleep(20)
 
     train_group_request(FolderFilePath)
     os.chdir(originalPath)
-    time.sleep(30)
 
 ############### Identify Face ##########################
-
 def identify_face_from_Group(faceId, groupID):
 
- 
     body = json.dumps({
         "faceIds": [faceId],
         "maxNumOfCandidatesReturned": 2,
         "personGroupId": groupID,
         })
-
-    try:
-        conn = httplib.HTTPSConnection('api.projectoxford.ai')
-        conn.request("POST", "/face/v1.0/identify?", body, headers)
-        response = conn.getresponse()
-        data = eval(response.read())
-        conn.close()
-        mostLikelyCandidate = data[0]["candidates"]
-        if not mostLikelyCandidate:
-            return "Unknown"
-        else:
-            print "Sure with confidence of %f" % data[0]["candidates"][0]["confidence"]
-            return data[0]["candidates"][0]["personId"]
-    except Exception as e:
-        print("[Errno {0}] {1}".format(e.errno, e.strerror))
-
-
+    data = send_request("POST", "/face/v1.0/identify?", body, headers)
+    mostLikelyCandidate = data[0]["candidates"]
+    if not mostLikelyCandidate:
+        return "Unknown"
+    else:
+        print "Sure with confidence of %f" % data[0]["candidates"][0]["confidence"]
+        return data[0]["candidates"][0]["personId"]
 
 
 ################## Match face to Group #######################
@@ -193,18 +158,19 @@ def identify_face(groupID):
     names_of_identifies = []
     originalPath = os.getcwd()
     identify_pictures = change_dir_get_file_list("identify")
+    personIDs = populate_personIDs(groupID)
 
     for filename in identify_pictures:
         faceId = detect_face("identify/"+filename)
 
         if faceId is not None:
+            time.sleep(7)
             candidateID = identify_face_from_Group(faceId, groupID)
-            time.sleep(10)
 
             if candidateID == "Unknown":
                 names_of_identifies.append("Unknown")
             else: 
-                names_of_identifies.append(get_person(candidateID, groupID))
+                names_of_identifies.append(personIDs[candidateID])
     return names_of_identifies
 
 
