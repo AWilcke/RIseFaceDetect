@@ -64,7 +64,7 @@ def videoDic(name):
         )
         
         #get the pics
-        if time.time() - lastRecord>0.33 and faces:
+        if time.time() - lastRecord>0.33 and len(faces) != 0:
             cv2.imwrite(str(number) + '_' + str(i) + '.jpg', frame)
             lastRecord = time.time()
             i+=1
