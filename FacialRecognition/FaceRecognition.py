@@ -1,4 +1,4 @@
-import httplib, urllib, base64, os, json
+import httplib, urllib, base64, os, json, urlparse
 
 AuthKey = 'a7f5439ce4fe4f05a1394ece03b03390'
 personsIDs = {}
@@ -40,6 +40,13 @@ def create_group(groupID):
     params = urllib.urlencode({
         'name' : groupID,
     })
+
+
+
+
+#db425b87-aae7-49c8-bd7f-d62e73160b49
+
+
 
     try:
         conn = httplib.HTTPSConnection('api.projectoxford.ai')
@@ -96,6 +103,7 @@ def add_Face_to_Person(groupID, currPersonId, picturePath):
     body = json.dumps({
         'url' : picturePath,
     })
+    print body
 
     try:
         conn = httplib.HTTPSConnection('api.projectoxford.ai')
@@ -116,7 +124,7 @@ def change_dir_get_file_list(dirPath):
 
 ############### Face Grouping ##########################
 def do_TrainingSet(FolderFilePath):
-    oldPath = os.getcwd()+"\\"+FolderFilePath
+    oldPath = os.getcwd()+"/"+FolderFilePath
     folders = change_dir_get_file_list(FolderFilePath)
     create_group(FolderFilePath)
     for name in folders:
@@ -124,11 +132,12 @@ def do_TrainingSet(FolderFilePath):
          os.chdir(oldPath)
          pictureNames = change_dir_get_file_list(name)
          for pictureName in pictureNames:
-            picturePath = "file://"+os.getcwd()+"/"+pictureName
+            picturePath = "http://azurehellocloud2016one.azurewebsites.net/"+name+"/"+pictureName
             print picturePath
             add_Face_to_Person(FolderFilePath, currPersonId, picturePath)
-            
-         
+            break
+     
+
 
 do_TrainingSet("squadgroup")
 print (personsIDs)
