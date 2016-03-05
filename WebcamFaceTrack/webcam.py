@@ -1,10 +1,14 @@
 import cv2
 import sys
+import time
 
 cascPath = sys.argv[1]
 faceCascade = cv2.CascadeClassifier(cascPath)
+timeAtFound = time.time() - 6 #first time ini of time
+
 
 video_capture = cv2.VideoCapture(0)
+
 
 while True:
     # Capture frame-by-frame
@@ -20,13 +24,24 @@ while True:
         flags=cv2.CASCADE_SCALE_IMAGE
     )
 
+    timeSinceFound = time.time() - timeAtFound
+
     # Draw a rectangle around the faces
+    if len(faces) == 0 or timeSinceFound<5:
+        pass
+    else:
+        x, y , w, h = faces[0]
+        cropimg = frame[y:y+h, x:x+w]
+        cv2.imshow("face", cropimg)
+        timeAtFound = time.time();
+
+
     for (x, y, w, h) in faces:
         cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
 
     # Display the resulting frame
     cv2.imshow('Video', frame)
-
+#
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
