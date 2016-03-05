@@ -1,14 +1,15 @@
 import cv2
 import sys
 import time
+from train import *
 
-cascPath = sys.argv[1]
-faceCascade = cv2.CascadeClassifier(cascPath)
+faceCascade = cv2.CascadeClassifier(cascadePath)
 timeAtFound = time.time() - 6 #first time ini of time
 
 
 video_capture = cv2.VideoCapture(0)
-
+recogniser = trainRecog('images')
+dic = {1:'Angus',2:'Arthur',3:'Lisa'}
 
 while True:
     # Capture frame-by-frame
@@ -27,17 +28,19 @@ while True:
     timeSinceFound = time.time() - timeAtFound
 
     # Draw a rectangle around the faces
-    if len(faces) == 0 or timeSinceFound<5:
-        pass
-    else:
-        x, y , w, h = faces[0]
-        cropimg = frame[y:y+h, x:x+w]
-        cv2.imshow("face", cropimg)
-        timeAtFound = time.time();
+    #if len(faces) == 0 or timeSinceFound<5:
+    #    pass
+    #else:
+    #    x, y , w, h = faces[0]
+    #    cropimg = frame[y:y+h, x:x+w]
+    #    cv2.imshow("face", cropimg)
+    #    timeAtFound = time.time();
 
 
     for (x, y, w, h) in faces:
         cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
+        name = recogniseFace(cv2.cvtColor(frame[y:y+h, x:x+w], cv2.COLOR_BGR2GRAY), recogniser, dic)
+        cv2.putText(frame, name, (x,y), cv2.FONT_HERSHEY_SIMPLEX, 2, (0,0,255), 2)
 
     # Display the resulting frame
     cv2.imshow('Video', frame)
