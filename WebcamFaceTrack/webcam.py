@@ -1,5 +1,4 @@
 import cv2
-import sys
 import time
 from train import *
 
@@ -9,7 +8,7 @@ timeAtFound = time.time() - 6 #first time ini of time
 
 video_capture = cv2.VideoCapture(0)
 recogniser = trainRecog('images')
-dic = {1:'Angus',2:'Arthur',3:'Lisa'}
+dic = {0:'Lisa', 1:'Angus',2:'Serafin',3:'Raz',4:'Ricardo',5:'Andreea',6:'Flaminia',7:'Arthur',8:'Viktorija'}
 
 while True:
     # Capture frame-by-frame
@@ -20,8 +19,8 @@ while True:
     faces = faceCascade.detectMultiScale(
         gray,
         scaleFactor=1.1,
-        minNeighbors=5,
-        minSize=(30, 30),
+        minNeighbors=10,
+        minSize=(50, 50),
         flags=cv2.CASCADE_SCALE_IMAGE
     )
 
@@ -38,7 +37,7 @@ while True:
 
 
     for (x, y, w, h) in faces:
-        cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
+        cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 0, 255), 2)
         name = recogniseFace(cv2.cvtColor(frame[y:y+h, x:x+w], cv2.COLOR_BGR2GRAY), recogniser, dic)
         cv2.putText(frame, name, (x,y), cv2.FONT_HERSHEY_SIMPLEX, 2, (0,0,255), 2)
 
