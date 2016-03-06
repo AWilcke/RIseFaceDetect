@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>SHOW ME WHAT YOU GOT!</title>
+    
+    <meta charset="utf-8">
+    <meta content="stuff, to, help, search, engines, not" name="keywords">
+    <meta content="What this page is about." name="description">
+    <meta content="Display Webcam Stream" name="title">
+
+    
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/typed.js"></script>
+    
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/override.css">
+
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Slab:400,700,300"
+          rel="stylesheet" type="text/css">
+  </head>
+  
+  <body>
+
+    <!-- Large modal -->
+    <div id="interactModal" class="modal fade bs-example-modal-lg" tabindex="-1">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="supersize-me">
+            <h1>Heading One</h1>
+            <p>Paragraph text</p>
+            <p>Response data from $GET or whatever should go in here</p>
+          </div>
+          
+          <button class="btn btn-success btn-lg btn-circle" id="modal-exit" onclick="reset_all()">
+            <span class="glyphicon glyphicon-ok"></span>
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    
+    <div class="vwrapper">
+      <video autoplay="true" id="yo_face"></video>
+    </div>
+
+    <div class="no_show">
+      <img id="captured">
+      <canvas id="canvas">
+      </canvas>
+    </div>
+
+    <div class="floaty-thing">
+      <div class="floaty-middle">
+        <span id="typed-strings">
+          <p id="person-name-p">Hey there</p>
+        </span>
+        <span id="typed"></span>
+      </div>
+    </div>
+    
+    <script src="js/scripts.js"></script>
+  </body>
+</html>

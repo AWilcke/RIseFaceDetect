@@ -1,0 +1,144 @@
+html, body {
+    width: 100%;
+    height: 100%;
+
+    font-family: 'Roboto Slab', Georgia, Times, serif;
+    font-size: 13pt;
+    color: #FFF;
+    background-color: #000;
+    /*background-image: url('../img/grain.gif');*/
+}
+
+button,
+button:active,
+button:focus {
+    outline-style: none !important;
+    outline: none !important;
+    outline-width: 0px;
+    outline-color: rgba(0,0,0,0);
+}
+
+#container {
+    margin: 0px auto;
+    width: 500px;
+    height: 375px;
+    border: 10px #333 solid;
+}
+
+#yo_face {
+    display: block;
+    width: 100%;
+    height: auto;
+    transform: scaleX(-1);
+    margin-top: -50vh;
+    opacity: 0.9;
+}
+
+.vwrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    padding-top: 50vh;
+    overflow: hidden;
+}
+
+.floaty-thing {
+    position: absolute;
+    top: 75%;
+    bottom: 0;
+    /*max-height: 200px;*/
+    overflow: hidden;
+    width: 100%;
+    padding-top: 1em;
+
+    background: linear-gradient(rgba(0,0,0,0.0),rgba(0,0,0,0.6));
+}
+
+.floaty-middle {
+    width: 100%;
+    margin: 0 auto;
+    text-align: center;
+    font-size: 7em;
+    font-weight: bold;
+}
+
+.no_show {
+    margin-left: -10000px;
+}
+
+#interactModal {
+    color: #111;
+}
+
+.modal-content {
+    padding: 8rem 5rem;
+}
+
+.modal-lg {
+    margin-top: 5rem;
+    margin-left: 16rem;
+    margin-right: 16rem;
+    width: auto;
+}
+
+.modal-content .btn-lg {
+    font-size: 1.4em;
+}
+
+.modal-content h1 {
+    font-weight: normal;
+    font-size: 2em;
+    margin-bottom: 0.6em;
+}
+
+.btn-circle {
+    border: 0;
+    border-radius: 50% !important;
+    width: 5em;
+    height: 5em;
+    box-shadow: 8px 8px 8px rgba(0,0,0,0.5);
+    transition: box-shadow 0.5s ease, background 0.5s ease;
+}
+
+.btn-circle:hover {
+    box-shadow: 12px 12px 10px rgba(0,0,0,0.5);
+}
+
+#modal-exit {
+    position: absolute;
+    bottom: -2.5em;
+    display: inline-block;
+    text-align: center;
+    left: 50%;
+    margin-left: -2.5em;
+}
+
+.supersize-me {
+    font-size: 1.4em;
+}
+
+
+.typed-cursor{
+    opacity: 1;
+    -webkit-animation: blink 0.7s infinite;
+    -moz-animation: blink 0.7s infinite;
+    animation: blink 0.7s infinite;
+}
+@keyframes blink{
+    0% { opacity:1; }
+    50% { opacity:0; }
+    100% { opacity:1; }
+}
+@-webkit-keyframes blink{
+    0% { opacity:1; }
+    50% { opacity:0; }
+    100% { opacity:1; }
+}
+@-moz-keyframes blink{
+    0% { opacity:1; }
+    50% { opacity:0; }
+    100% { opacity:1; }
+}
+
