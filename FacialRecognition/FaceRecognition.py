@@ -53,13 +53,14 @@ def detect_face(filePath):
 
     params = urllib.urlencode({
         'returnFaceId': 'true',
-        'returnFaceLandmarks': 'false'
+        'returnFaceLandmarks': 'false',
     })
 
     body = json.dumps({
-            'url' : "http://facehosting.azurewebsites.net/"+filePath,
+            'url' : "https://raw.githubusercontent.com/LisaXie/facetraining/master/"+filePath,
         })
 
+    print body
     data = send_request("POST", "/face/v1.0/detect?%s" % params, body , headers)
     return data[0]["faceId"]
 
@@ -127,10 +128,15 @@ def do_TrainingSet(FolderFilePath):
          currPersonId = create_person(name, FolderFilePath)
          os.chdir(oldPath)
          pictureNames = change_dir_get_file_list(name)
-
+         count = 0
          for pictureName in pictureNames:
-            picturePath = "http://facehosting.azurewebsites.net/"+FolderFilePath+"/"+name+"/"+pictureName
+            if count == 10:
+                print "putting it to sleep"
+                time.sleep(40)
+                count = 0
+            picturePath = "http://facehost.azurewebsites.net/"+FolderFilePath+"/"+name+"/"+pictureName
             add_Face_to_Person(FolderFilePath, currPersonId, picturePath)
+            count += 1
          time.sleep(20)
 
     train_group_request(FolderFilePath)
@@ -154,25 +160,29 @@ def identify_face_from_Group(faceId, groupID):
 
 
 ################## Match face to Group #######################
-def identify_face(groupID):
+def identify_face(groupID, filePath=None):
     names_of_identifies = []
-    originalPath = os.getcwd()
+    if filePath is not None:
+        os.chdir(filePath)
     identify_pictures = change_dir_get_file_list("identify")
     personIDs = populate_personIDs(groupID)
 
     for filename in identify_pictures:
-        faceId = detect_face("identify/"+filename)
+        if filename.split('.')[-1] == 'jpg':
+            print "The file name is :" +filename
+            faceId = detect_face("identify/"+filename)
+            print faceId
+            if faceId is not None:
+                time.sleep(7)
+                candidateID = identify_face_from_Group(faceId, groupID)
+                os.system("rm "+os.getcwd()+"/"+filename)
 
-        if faceId is not None:
-            time.sleep(7)
-            candidateID = identify_face_from_Group(faceId, groupID)
-
-            if candidateID == "Unknown":
-                names_of_identifies.append("Unknown")
-            else: 
-                names_of_identifies.append(personIDs[candidateID])
+                if candidateID == "Unknown":
+                    names_of_identifies.append("Unknown")
+                else: 
+                    names_of_identifies.append(personIDs[candidateID])
     return names_of_identifies
 
 
 #do_TrainingSet("squadgroup")
-print identify_face("squadgroup")
+#print identify_face("squadgroup")
