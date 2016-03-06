@@ -11,5 +11,5 @@ while True:
       os.system("git add --all")
       os.system("git commit -m 'added file " + newItem + "'")
       os.system("git push origin master")
-      os.system("python /Users/lisaxie/Documents/Tech/Hackathon2016/SHIV/trainingSet/identify.py")
+      os.system("python /Users/lisaxie/Documents/Tech/Hackathon2016/SHIV/RIseFaceDetect/FacialRecognition/identify.py")
       oldList = newList
