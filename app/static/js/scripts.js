@@ -94,17 +94,18 @@ function cronjob() {
     if (currently_checking){
         takepicture();
         
-        var img_src = document.getElementById("captured");
-        var fd = new FormData();
-        fd.append( 'image', img_src.attributes['src'] );
+        // var img_src = document.getElementById("captured");
+        // var fd = new FormData();
+        // fd.append( 'image', $("#captured").attr("src") );
+        var poo = $("#captured").attr("src");
         
         $.ajax({
             type: "POST",
             url: "/push_face",
-            enctype: "multipart/form-data",
+            enctype: "image/png",
             contentType: false,
             processData: false,
-            data: fd,
+            data: poo,
             success: post_success
         });
 

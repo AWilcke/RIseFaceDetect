@@ -27,6 +27,7 @@ def friends(usernum):
 @app.route('/push_face', methods=['POST'])
 def push_face():
     # do something with request.form['image']
+    image = request.data
     return "TODO"
 
 # Return JSON object with data about the person, or a None
