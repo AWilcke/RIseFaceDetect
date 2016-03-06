@@ -3,10 +3,12 @@ from flask import render_template
 from flask import request
 from redisupdate import *
 from webapp import *
+import numpy as np
 
 app = Flask(__name__)
 init()
-
+face = []
+faces = [] #needs to be initialised and empty on first run
 @app.route('/')
 def main():
     return render_template("index.html")
@@ -26,16 +28,17 @@ def friends(usernum):
 # Receive image as POST data from the UI
 @app.route('/push_face', methods=['POST'])
 def push_face():
+    
     # do something with request.form['image']
-    image = request.data
-    return "TODO"
+    global face
+    image = request.data.decode('base64')
+    face, (x,y,w,h) = getFace(np.array(image))
+    return
 
 # Return JSON object with data about the person, or a None
-faces = [] #needs to be initialised and empty on first run
 @app.route('/get_face', methods=['GET'])
 def get_face():
     global faces
-    face, (x,y,w,h) = getFace(frame)
     if len(face)!=0:
         seen = time.time()
         faces.append(face)
