@@ -92,7 +92,7 @@ function cronjob() {
     
     $.ajax({
         type: "POST",
-        url: "/media",
+        url: "/push_face",
         enctype: "multipart/form-data",
         contentType: false,
         processData: false,
@@ -102,7 +102,7 @@ function cronjob() {
         success: post_success
     });
     
-    var t_id = window.setTimeout(cronjob, 1000);
+    var t_id = window.setTimeout(cronjob, 500);
 }
 
 $(document).ready(function (){window.setTimeout(cronjob, 3500);});

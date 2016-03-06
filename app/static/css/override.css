@@ -6,7 +6,7 @@ html, body {
     font-size: 13pt;
     color: #FFF;
     background-color: #000;
-    /*background-image: url('../img/grain.gif');*/
+    /*background-image: url('../static/img/grain.gif');*/
 }
 
 button,
