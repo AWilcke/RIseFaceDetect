@@ -30,7 +30,8 @@ def friends(usernum):
 # Receive image as POST data from the UI
 @app.route('/push_face', methods=['POST'])
 def push_face():
-    # do something with request.form['file']
+    # do something with request.form['image']
+    
     return "TODO"
 
 # Return JSON object with data about the person, or a None

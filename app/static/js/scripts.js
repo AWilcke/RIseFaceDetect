@@ -91,7 +91,7 @@ function cronjob() {
         
         var img_src = document.getElementById("captured");
         var fd = new FormData();
-        fd.append( 'file', img_src.attributes['src'] );
+        fd.append( 'image', img_src.attributes['src'] );
         
         $.ajax({
             type: "POST",
