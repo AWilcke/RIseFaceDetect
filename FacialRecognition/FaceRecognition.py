@@ -59,9 +59,9 @@ def detect_face(filePath):
     body = json.dumps({
             'url' : "https://raw.githubusercontent.com/LisaXie/facetraining/master/"+filePath,
         })
-
     print body
     data = send_request("POST", "/face/v1.0/detect?%s" % params, body , headers)
+    print data
     return data[0]["faceId"]
 
 
@@ -166,10 +166,9 @@ def identify_face(groupID, filePath=None):
         os.chdir(filePath)
     identify_pictures = change_dir_get_file_list("identify")
     personIDs = populate_personIDs(groupID)
-
+    print personIDs
     for filename in identify_pictures:
         if filename.split('.')[-1] == 'jpg':
-            print "The file name is :" +filename
             faceId = detect_face("identify/"+filename)
             print faceId
             if faceId is not None:
