@@ -1,5 +1,6 @@
 from flask import Flask
 from flask import render_template
+from flask import request
 import redis
 import json
 
@@ -29,6 +30,7 @@ def friends(usernum):
 # Receive image as POST data from the UI
 @app.route('/push_face', methods=['POST'])
 def push_face():
+    # do something with request.form['file']
     return "TODO"
 
 # Return JSON object with data about the person, or a None

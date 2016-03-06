@@ -78,7 +78,7 @@ function modal_call() {
 function post_success() {
     if (currently_checking){
         
-        addName(", Angus");
+        addName(", QT");
         currently_checking = false;
         
         window.setTimeout(modal_call, 2000);
@@ -86,21 +86,23 @@ function post_success() {
 }
 
 function cronjob() {
-    takepicture();
-
-    var img_src = document.getElementById("captured");
-    
-    $.ajax({
-        type: "POST",
-        url: "/push_face",
-        enctype: "multipart/form-data",
-        contentType: false,
-        processData: false,
-        data: {
-            file: img_src.attributes['src']
-        },
-        success: post_success
-    });
+    if (currently_checking){
+        takepicture();
+        
+        var img_src = document.getElementById("captured");
+        var fd = new FormData();
+        fd.append( 'file', img_src.attributes['src'] );
+        
+        $.ajax({
+            type: "POST",
+            url: "/push_face",
+            enctype: "multipart/form-data",
+            contentType: false,
+            processData: false,
+            data: fd,
+            success: post_success
+        });
+    }
     
     var t_id = window.setTimeout(cronjob, 500);
 }
