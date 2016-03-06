@@ -1,11 +1,11 @@
 import redis, json
 
 r = redis.StrictRedis()
+f = open('../WebcamFaceTrack/dic.txt', 'r')
+d = eval(f.read())
+f.close()
 
-def init(dic):
-    f = open(dic,'r')
-    d = eval(f.read())
-    f.close()
+def init():
     for key in d.keys():
         r.hset('user:'+str(key), 'name', d[key])
         r.hset('user:'+str(key), 'location','unknown')
@@ -13,10 +13,11 @@ def init(dic):
 def getJson(ID):
     name = getName(ID)
     location = getLocation(ID)
-    friends = getFriends(ID)
+    friends = [d[int(friend)] for friend in getFriends(ID)]
+    friendsLoc = getFriendLoc(ID)
 
-    d = {'name':name, 'location':location, 'friends':friends}
-    return json.dumps(d)
+    output = {'name':name, 'location':location, 'friends':friends, 'friendLocation':friendsLoc}
+    return json.dumps(output)
 
 def getName(ID):
     return r.hget('user:'+str(ID),'name')
@@ -33,4 +34,9 @@ def addFriend(ID, friendID):
 def getFriends(ID):
     return list(r.smembers(str(ID)+'friends'))
 
-
+def getFriendLoc(ID):
+    friends = getFriends(ID)
+    output = {}
+    for friend in friends:
+        output[d[int(friend)]] = getLocation(friend)
+    return output
