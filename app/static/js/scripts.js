@@ -84,6 +84,9 @@ function handle_get(data, testStatus, xhr) {
         var proc_data = JSON.parse(data);
         
         addName(", " + proc_data['name']);
+
+        $("#loc").html(proc_date['location']);
+        
         currently_checking = false;
         
         window.setTimeout(modal_call, 2000);
