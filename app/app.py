@@ -1,6 +1,7 @@
 from flask import Flask
 from flask import render_template
 from redisupdate import *
+from webapp import *
 
 app = Flask(__name__)
 init()
@@ -29,12 +30,22 @@ def push_face():
     return "TODO"
 
 # Return JSON object with data about the person, or a None
+faces = [] #needs to be initialised and empty on first run
 @app.route('/get_face', methods=['GET'])
 def get_face():
-
-    return "Not yet", 204
-
-    return "{\"name\":\"QT\"}\n"
+    global faces
+    face, (x,y,w,h) = getFace(frame)
+    if len(face)!=0:
+        seen = time.time()
+        faces.append(face)
+    
+    ID = getName(faces)
+    data = getJson(int(ID))
+    if time.time() - seen >3: #no face seen in 3s
+        faces = []
+        return "Not yet", 204
+    else:
+        return data
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=5000, processes=30, debug=True, ssl_context='adhoc')
