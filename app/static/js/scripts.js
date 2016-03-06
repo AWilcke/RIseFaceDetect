@@ -52,7 +52,7 @@ function takepicture() {
         canvas.height = height;
         context.drawImage(video, 0, 0, width, height);
         
-        var data = canvas.toDataURL('image/png');
+        var data = canvas.toDataURL('image/jpg');
         photo.setAttribute('src', data);
     } else {
         clearphoto();
@@ -102,7 +102,7 @@ function cronjob() {
         $.ajax({
             type: "POST",
             url: "/push_face",
-            enctype: "image/png",
+            enctype: "image/jpeg",
             contentType: false,
             processData: false,
             data: poo,
