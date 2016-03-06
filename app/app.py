@@ -1,9 +1,10 @@
 from flask import Flask
 from flask import render_template
+from flask import request
 from redisupdate import *
 
 app = Flask(__name__)
-init('../WebcamFaceTrack/dic.txt')
+init()
 
 @app.route('/')
 def main():
@@ -25,14 +26,16 @@ def friends(usernum):
 @app.route('/push_face', methods=['POST'])
 def push_face():
     # do something with request.form['image']
-    
     return "TODO"
 
 # Return JSON object with data about the person, or a None
 @app.route('/get_face', methods=['GET'])
 def get_face():
-    return "TODO"
+
+    return "Not yet", 204
+
+    return "{\"name\":\"QT\"}\n"
 
 if __name__ == '__main__':
-    #app.run(host="0.0.0.0", port=5000, processes=30, debug=True, ssl_context='adhoc')
-    app.run()
+    app.run(host="0.0.0.0", port=5000, processes=30, debug=True, ssl_context='adhoc')
+    #app.run()

@@ -76,9 +76,14 @@ function modal_call() {
 }
 
 function post_success() {
-    if (currently_checking){
+    // MEH
+}
+
+function handle_get(data, testStatus, xhr) {
+    if (currently_checking && xhr.status == 200){
+        var proc_data = JSON.parse(data);
         
-        addName(", QT");
+        addName(", " + proc_data['name']);
         currently_checking = false;
         
         window.setTimeout(modal_call, 2000);
@@ -102,6 +107,8 @@ function cronjob() {
             data: fd,
             success: post_success
         });
+
+        $.get("/get_face", handle_get);
     }
     
     var t_id = window.setTimeout(cronjob, 500);
