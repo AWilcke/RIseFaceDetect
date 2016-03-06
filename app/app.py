@@ -1,5 +1,6 @@
 from flask import Flask
 from flask import render_template
+from flask import request
 from redisupdate import *
 from webapp import *
 
@@ -26,7 +27,6 @@ def friends(usernum):
 @app.route('/push_face', methods=['POST'])
 def push_face():
     # do something with request.form['image']
-    
     return "TODO"
 
 # Return JSON object with data about the person, or a None
