@@ -26,9 +26,15 @@ def name(usernum):
 def friends(usernum):
     return r.lrange('user'+ usernum + 'friends', 0, -1)
 
+# Receive image as POST data from the UI
 @app.route('/push_face', methods=['POST'])
 def push_face():
-    return "OK"
+    return "TODO"
+
+# Return JSON object with data about the person, or a None
+@app.route('/get_face', methods=['GET'])
+def get_face():
+    return "TODO"
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=5000, processes=30, debug=True, ssl_context='adhoc')
