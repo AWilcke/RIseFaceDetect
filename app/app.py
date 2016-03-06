@@ -9,6 +9,7 @@ app = Flask(__name__)
 init()
 face = []
 faces = [] #needs to be initialised and empty on first run
+
 @app.route('/')
 def main():
     return render_template("index.html")
