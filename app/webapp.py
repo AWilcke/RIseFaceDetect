@@ -3,8 +3,9 @@ import time
 
 faceCascade = cv2.CascadeClassifier(cascadePath)
 dic = eval(open('dic.txt','r').read())
-video_capture = cv2.VideoCapture(0)
-recogniser = trainRecog('TrainingData')
+#video_capture = cv2.VideoCapture(0)
+#recogniser = trainRecog('TrainingData')
+recogniser = trainRecog('TestData')
 
 #returns face as grayscale
 def getFace(pic):
@@ -29,16 +30,20 @@ def getFace(pic):
     else:
         return [] , (0,0,0,0)
 
-#returns most common answer for a list of faces
+#returns most common ID for a list of faces
 def getName(facePics):
     names = [recogniseID(face, recogniser) for face in facePics]
+    if len(names) == 0:
+        return 0
     best = max(set(names), key=names.count)
     return best
 
 #testing how it works in local
 def testLocal(runtime):
     start = time.time()
-    faces = []
+    lastSeen = start
+    names = []
+    name = ''
     cv2.startWindowThread()
     cv2.namedWindow('Recognising')
 
@@ -46,10 +51,13 @@ def testLocal(runtime):
         ret, frame = video_capture.read()
         face, (x,y,w,h) = getFace(frame)
         if len(face) != 0:
-            faces.append(face)
+            lastSeen = time.time()
+            names.append(recogniseFace(face, recogniser, dic))
+            name = max(set(names), key=names.count)
+        if time.time() - lastSeen > 1:
+            name = ''
         cv2.rectangle(frame, (x, y), (x+w, y+h) ,(0,0,255),2)
+        cv2.putText(frame, name, (x,y), cv2.FONT_HERSHEY_SIMPLEX, 2, (0,0,255),2)
         cv2.imshow('Recognising', frame)
     
-    name = getName(faces)
     cv2.destroyAllWindows()
-    return name, len(faces)

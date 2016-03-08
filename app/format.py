@@ -97,7 +97,7 @@ def takePic(path):
             )
 
         for (x, y, w, h) in faces:
-            face = frame[y:y+h, x:x+w]
+            face = gray[y:y+h, x:x+w]
             cv2.rectangle(frame, (x,y), (x+w, y+h), (0,0,255),2)
 
         cv2.imshow('Photobooth', frame)

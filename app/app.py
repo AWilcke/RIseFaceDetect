@@ -4,11 +4,17 @@ from flask import request
 from redisupdate import *
 from webapp import *
 import numpy as np
+from PIL import Image
+import base64
 
 app = Flask(__name__)
 init()
-face = []
-faces = [] #needs to be initialised and empty on first run
+
+#global variables
+face = []   #store the face of current frame
+name = ''   #store name predicted
+names = [] #store list of all predicted names
+seen = time.time() # store last time a face was seen
 
 @app.route('/')
 def main():
@@ -32,26 +38,33 @@ def push_face():
     
     # do something with request.form['image']
     global face
-    image = request.data.decode('base64')
-    face, (x,y,w,h) = getFace(np.array(image))
-    return
+    image = request.data.split(',')[1]
+    img = image.decode('base64')
+    im = cv2.imdecode(np.frombuffer(img, dtype='uint8'), 1)
+    face, (x,y,w,h) = getFace(im)
+    return 'OK'
 
 # Return JSON object with data about the person, or a None
 @app.route('/get_face', methods=['GET'])
 def get_face():
-    global faces
+    global names, name, seen, face
+
+    #if a face is seen, predict most likely name
     if len(face)!=0:
         seen = time.time()
-        faces.append(face)
+        names.append(recogniseID(face, recogniser))
+        name = max(set(names), key=names.count)
+    #JSON data for name
+    data = getJson(name)
     
-    ID = getName(faces)
-    data = getJson(int(ID))
-    if time.time() - seen >3: #no face seen in 3s
-        faces = []
+    if time.time() - seen >1: #no face seen in 1s
+        names = []
+        name = ''
         return "Not yet", 204
+    
     else:
         return data
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=5000, processes=30, debug=True, ssl_context='adhoc')
+    app.run(host="0.0.0.0", port=5010, processes=30, debug=True, ssl_context='adhoc')
     #app.run()
